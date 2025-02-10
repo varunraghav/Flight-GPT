@@ -1,0 +1,13 @@
+# Ignore environment variables
+.env
+
+# Ignore virtual environment
+venv/
+
+# Ignore ChromaDB storage
+chroma_db/
+chroma_db/chroma.sqlite3
+
+# Ignore system files
+__pycache__/
+.DS_Store
