@@ -71,3 +71,56 @@ INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See       
 INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
 INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+ERROR:root:Chat error: Traceback (most recent call last):
+  File "/Users/varunraghav/Documents/AirlineGPT/api/main.py", line 38, in chat
+    if not verify_user_session(query_input.session_id):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/varunraghav/Documents/AirlineGPT/api/db_utils.py", line 83, in verify_user_session
+    cursor.execute('SELECT id FROM users WHERE current_session_id = ?', (session_id,))
+sqlite3.OperationalError: no such column: current_session_id
+
+INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+ERROR:root:Chat error: Traceback (most recent call last):
+  File "/Users/varunraghav/Documents/AirlineGPT/api/main.py", line 38, in chat
+    if not verify_user_session(query_input.session_id):
+           ^^^^^^^^^^^^^^^^^^^
+NameError: name 'verify_user_session' is not defined
+
+ERROR:root:Chat error: Traceback (most recent call last):
+  File "/Users/varunraghav/Documents/AirlineGPT/api/main.py", line 38, in chat
+    if not verify_user_session(query_input.session_id):
+           ^^^^^^^^^^^^^^^^^^^
+NameError: name 'verify_user_session' is not defined
+
+ERROR:root:Chat error: Traceback (most recent call last):
+  File "/Users/varunraghav/Documents/AirlineGPT/api/main.py", line 38, in chat
+    if not verify_user_session(query_input.session_id):
+           ^^^^^^^^^^^^^^^^^^^
+NameError: name 'verify_user_session' is not defined
+
+INFO:chromadb.telemetry.product.posthog:Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+ERROR:root:Chat error: Traceback (most recent call last):
+  File "/Users/varunraghav/Documents/AirlineGPT/api/main.py", line 53, in chat
+    return QueryResponse(
+           ^^^^^^^^^^^^^^
+  File "/Users/varunraghav/Documents/AirlineGPT/venv/lib/python3.11/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for QueryResponse
+model
+  Input should be 'gpt-4o' or 'gpt-4o-mini' [type=enum, input_value='gpt-4-mini', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.10/v/enum
+
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

@@ -55,3 +55,20 @@ def show_signup_form():
                         st.error(f"Failed to create account: {response.text}")
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
+
+def verify_password(username, password):
+    password_hash = hash_password(password)
+    return verify_user(username, password_hash)
+
+
+def create_user(username: str, password_hash: str) -> bool:
+    """Simple user creation function"""
+    try:
+        response = requests.post(
+            "http://localhost:8000/create-user",
+            json={"username": username, "password_hash": password_hash}
+        )
+        return response.status_code == 200
+    except Exception:
+        return False
+

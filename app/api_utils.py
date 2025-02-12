@@ -12,8 +12,8 @@ def get_api_response(question, session_id, model):
         "model": model
     }  # Fixed closing brace
 
-    if session_id:
-        data["session_id"] = session_id
+    #if session_id:
+    #    data["session_id"] = session_id
 
     try:
         response = requests.post(

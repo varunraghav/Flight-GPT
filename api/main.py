@@ -6,8 +6,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from pydantic_models import QueryInput, QueryResponse
 from llamaindex_utils import initialize_system
-from db_utils import insert_application_logs, get_chat_history
-from db_utils import get_db_connection
+from db_utils import insert_application_logs, get_chat_history, get_db_connection
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
@@ -35,6 +34,10 @@ class ChatQuery(BaseModel):
 @app.post("/chat", response_model=QueryResponse)
 def chat(query_input: ChatQuery):  # Changed from QueryInput
     try:
+        # Add authentication check
+        #if not verify_user_session(query_input.session_id):
+        #    raise HTTPException(status_code=401, detail="Unauthorized")
+
         # Add validation
         if not query_input.question:
             raise HTTPException(status_code=400, detail="Question is required")

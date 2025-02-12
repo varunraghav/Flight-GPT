@@ -77,6 +77,8 @@ def verify_user(username, password_hash):
     conn.close()
     return result[0] == password_hash if result else False
 
+
+
 # Update the initialization section
 create_auth_table()
 
