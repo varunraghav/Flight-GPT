@@ -1,14 +1,22 @@
 import sqlite3
 import traceback
 from typing import Optional
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
 from fastapi import FastAPI
+from datetime import timedelta
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from pydantic_models import QueryInput, QueryResponse
+from pydantic_models import QueryResponse
 from llamaindex_utils import initialize_system
-from db_utils import insert_application_logs, get_chat_history, get_db_connection
+from db_utils import get_db_connection
+from auth_utils import (
+    verify_password, 
+    get_password_hash, 
+    create_access_token, 
+    get_current_user,
+    ACCESS_TOKEN_EXPIRE_MINUTES
+)
 from fastapi.middleware.cors import CORSMiddleware
-import shutil
 import os
 import uuid
 import logging
@@ -31,13 +39,13 @@ class ChatQuery(BaseModel):
     session_id: Optional[str] = None
 
 # Update the chat endpoint
+# Protect your chat endpoint
 @app.post("/chat", response_model=QueryResponse)
-def chat(query_input: ChatQuery):  # Changed from QueryInput
+async def chat(
+    query_input: ChatQuery,
+    current_user: str = Depends(get_current_user)
+):
     try:
-        # Add authentication check
-        #if not verify_user_session(query_input.session_id):
-        #    raise HTTPException(status_code=401, detail="Unauthorized")
-
         # Add validation
         if not query_input.question:
             raise HTTPException(status_code=400, detail="Question is required")
@@ -79,9 +87,10 @@ def verify_user_credentials(user_data: dict):
 def create_user(user_data: dict):
     conn = get_db_connection()
     try:
+        hashed_password = get_password_hash(user_data['password'])
         conn.execute(
             'INSERT INTO users (username, password_hash) VALUES (?, ?)',
-            (user_data['username'], user_data['password_hash'])
+            (user_data['username'], hashed_password)
         )
         conn.commit()
         return {"message": "User created successfully!"}
@@ -89,3 +98,27 @@ def create_user(user_data: dict):
         raise HTTPException(status_code=400, detail="Username already exists")
     finally:
         conn.close()
+
+
+
+# Add these new endpoints
+@app.post("/token")
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT password_hash FROM users WHERE username = ?', (form_data.username,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if not user or not verify_password(form_data.password, user['password_hash']):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": form_data.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}

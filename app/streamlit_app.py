@@ -1,13 +1,9 @@
 import streamlit as st
-import uuid  # Add this import
-#from sidebar import display_sidebar
-#from chat_interface import display_chat_interface
-#from login import handle_auth
+import uuid 
+from chat_interface import display_chat_interface  # Importing a function to display the chat interface
+from login import show_login_page  # Importing a function to show the login page
+from sidebar import display_sidebar  # Importing a function to display the sidebar
 
-#import streamlit as st
-from chat_interface import display_chat_interface
-from login import show_login_page
-from sidebar import display_sidebar
 # Page configuration
 st.set_page_config(
     page_title="Airline Policy Assistant",
@@ -16,6 +12,7 @@ st.set_page_config(
 )
 
 # Initialize session state variables
+# Streamlit's session state is used to store variables that persist across user interactions.
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "username" not in st.session_state:
@@ -36,30 +33,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# Remove or comment out the extra multiline string to resolve the issue
-# """  <-- This is causing Streamlit to render it on the UI
-# Session state initialization
-# required_session_keys = { 
-#     'messages': [],
-#     'session_id': None,
-#     'authenticated': False,
-#     'username': None,
-#     'model': "gpt-4o-mini" 
-# }
-# for key, default in required_session_keys.items():
-#     if key not in st.session_state:
-#         st.session_state[key] = default
-
-# Main app structure
-# def main():
-#     st.title("✈️ Airline Policy Analysis Assistant")
-#     handle_auth() # Authentication handling
-#     display_chat_interface()
-#     if st.session_state.authenticated:
-#         display_sidebar()
-# if __name__ == "__main__":
-#     main()
-# """
