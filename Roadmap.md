@@ -4,6 +4,7 @@ Link with Domain name purchased
 ## Week 1-2
 1. Integrate Amadeus API functionalities used in FlightGPT prototype repo
 2. Improve system prompts to handle wider scenarios.
+3. Improve Frontend like mentioning capabilities of chatbot in sidebar.
 
 ## Week 3
 1. Improve signup and login page
