@@ -4,6 +4,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
+import os
 
 # Configuration
 SECRET_KEY = os.getenv('SECRET_KEY')
