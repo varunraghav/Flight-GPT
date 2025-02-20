@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import re
 
 def get_api_response(question, session_id, model):
     # Check if user is authenticated and has token
@@ -74,3 +75,20 @@ def logout_user():
         del st.session_state.authenticated
     if 'username' in st.session_state:
         del st.session_state.username
+
+def is_valid_email(email: str) -> bool:
+    # Regular expression for validating an email
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email) is not None
+
+def is_valid_password(password: str) -> bool:
+    # Check length
+    if len(password) < 8:
+        return False
+    # Check for at least one numeral
+    if not any(char.isdigit() for char in password):
+        return False
+    # Check for at least one special character
+    if not any(char in '!@#$%^&*()-_=+[]{}|;:,.<>?/`~' for char in password):
+        return False
+    return True

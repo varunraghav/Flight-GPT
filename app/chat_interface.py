@@ -12,7 +12,7 @@ def display_chat_interface():
     # Initialize messages if not present
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "Ask me about airline policies!"}
+            {"role": "assistant", "content": "Ask me about airline policies! For better results, mention the airline names in the first query!"}
         ]
 
     # Display chat messages

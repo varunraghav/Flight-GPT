@@ -4,9 +4,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 # Configuration
-SECRET_KEY = "d6f9e8b5a467c3de5b8f9343b7c0d8e6f22a3d28b4e5d938c6f8b9e8f2d3c4a7"  # Change this to a secure secret key
+SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
