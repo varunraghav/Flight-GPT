@@ -1,14 +1,16 @@
 import sqlite3
 import traceback
+import random
 from typing import Optional
 from fastapi import Depends, HTTPException
 from fastapi import FastAPI
-from datetime import timedelta
+from datetime import timedelta, datetime
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from pydantic_models import QueryResponse
 from llamaindex_utils import initialize_system
 from db_utils import get_db_connection
+from email_utils import send_otp_email
 from auth_utils import (
     verify_password, 
     get_password_hash, 
@@ -122,3 +124,86 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.post("/verify-email")
+async def verify_email(data: dict):
+    email = data.get("email")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Check if email exists in users table
+    cursor.execute('SELECT id FROM users WHERE username = ?', (email,))
+    user = cursor.fetchone()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Email not found")
+    
+    return {"message": "Email verified"}
+
+@app.post("/request-password-reset")
+async def request_password_reset(data: dict):
+    email = data.get("email")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get user ID (email existence already verified)
+    cursor.execute('SELECT id FROM users WHERE username = ?', (email,))
+    user = cursor.fetchone()
+    
+    # Generate OTP and set expiry
+    otp = ''.join(random.choices('0123456789', k=6))
+    expiry = datetime.utcnow() + timedelta(minutes=10)
+    
+    # Store OTP in database
+    cursor.execute(
+        '''INSERT INTO password_reset_tokens (user_id, otp, expiry, used)
+           VALUES (?, ?, ?, 0)''', 
+        (user['id'], otp, expiry)
+    )
+    conn.commit()
+
+    print(f"Email is {email}")
+    print(f"OTP is {otp}")
+    
+    # Send OTP via email
+    if not send_otp_email(email, otp):
+        raise HTTPException(status_code=500, detail="Failed to send OTP")
+    
+    return {"message": "OTP sent successfully"}
+
+@app.post("/verify-reset-password")
+async def verify_reset_password(data: dict):
+    email = data.get("email")
+    otp = data.get("otp")
+    new_password = data.get("new_password")
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get user ID
+    cursor.execute('SELECT id FROM users WHERE username = ?', (email,))
+    user = cursor.fetchone()
+    
+    # Verify OTP
+    cursor.execute(
+        '''SELECT id FROM password_reset_tokens 
+           WHERE user_id = ? AND otp = ? AND used = 0 AND expiry > ?''', 
+        (user['id'], otp, datetime.utcnow())
+    )
+    token = cursor.fetchone()
+    
+    if not token:
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+    
+    # Update password
+    hashed_password = get_password_hash(new_password)
+    cursor.execute('UPDATE users SET password_hash = ? WHERE id = ?', 
+                  (hashed_password, user['id']))
+    
+    # Mark OTP as used
+    cursor.execute('UPDATE password_reset_tokens SET used = 1 WHERE id = ?', 
+                  (token['id'],))
+    
+    conn.commit()
+    return {"message": "Password reset successful"}

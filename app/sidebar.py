@@ -14,9 +14,6 @@ def display_sidebar():
         if st.session_state.authenticated:
             st.write(f"Logged in as: {st.session_state.username}")
 
-            if "session_id" in st.session_state:
-                st.write(f"Session ID: {st.session_state.session_id}")
-
             if st.button("Logout"):
                 st.session_state.authenticated = False
                 st.session_state.username = None

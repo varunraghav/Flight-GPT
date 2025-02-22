@@ -3,6 +3,8 @@ import uuid
 from chat_interface import display_chat_interface  # Importing a function to display the chat interface
 from login import show_login_page  # Importing a function to show the login page
 from sidebar import display_sidebar  # Importing a function to display the sidebar
+import streamlit.components.v1 as components
+
 
 # Page configuration
 st.set_page_config(
@@ -10,6 +12,19 @@ st.set_page_config(
     page_icon="✈️",
     layout="wide"
 )
+
+# Add Google Analytics tracking code
+GA_TRACKING_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L9F1D0E5Y8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-L9F1D0E5Y8');
+</script>
+"""
+components.html(GA_TRACKING_CODE, height=0, width=0)
 
 # Initialize session state variables
 # Streamlit's session state is used to store variables that persist across user interactions.

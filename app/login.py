@@ -1,24 +1,35 @@
 import streamlit as st
 import requests
 from api_utils import login_user, logout_user, is_valid_email, is_valid_password
-
+from reset_password import show_reset_password  # Import the reset password module
 
 def show_login_page():
     st.title("Welcome to Airline Assistant")
 
+    # Initialize session states if not already set
     if 'signup_success' not in st.session_state:
         st.session_state.signup_success = False
     if 'success_message' not in st.session_state:
         st.session_state.success_message = ""
     if 'active_tab' not in st.session_state:
         st.session_state.active_tab = "Login"
-    
+    if 'show_reset_password' not in st.session_state:
+        st.session_state.show_reset_password = False
+
+    # Conditional rendering: if "Forgot Password?" is clicked, show Reset Password
+    if st.session_state.show_reset_password:
+        show_reset_password()
+        return
+
+    # Create tabs for Login and Sign-Up
     tab1, tab2 = st.tabs(["Login", "Sign Up"])
-    
+
+    # Login Tab
     with tab1:
         st.subheader("Login to Your Account")
         login_username = st.text_input("Username", key="login_username")
         login_password = st.text_input("Password", type="password", key="login_password")
+        
         if st.button("Login"):
             if login_username and login_password:
                 if login_user(login_username, login_password):
@@ -33,7 +44,13 @@ def show_login_page():
         if st.session_state.success_message:
             st.success(st.session_state.success_message)
             st.session_state.success_message = ""
-    
+
+        # Add "Forgot Password?" button
+        if st.button("Forgot Password?"):
+            st.session_state.show_reset_password = True
+            st.rerun()
+
+    # Sign-Up Tab
     with tab2:
         st.subheader("Create a New Account")
         signup_username = st.text_input("Username", key="signup_username")

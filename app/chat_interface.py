@@ -41,10 +41,10 @@ def display_chat_interface():
             # Display response
             with st.chat_message("assistant"):
                 st.markdown(response['answer'])
-                with st.expander("Response Details"):
-                    st.caption(f"**Model**: {response['model']}")
-                    st.caption(f"**Session ID**: `{response['session_id']}`")
-                    st.code(response['answer'], language='markdown')
+                #with st.expander("Response Details"):
+                #    st.caption(f"**Model**: {response['model']}")
+                #    st.caption(f"**Session ID**: `{response['session_id']}`")
+                #    st.code(response['answer'], language='markdown')
 
             st.session_state.messages.append({
                 "role": "assistant",

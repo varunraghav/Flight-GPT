@@ -76,7 +76,20 @@ def verify_user(username, password_hash):
     conn.close()
     return result[0] == password_hash if result else False
 
+# Add this function to create password reset tokens table
+def create_password_reset_table():
+    conn = get_db_connection()
+    conn.execute('''CREATE TABLE IF NOT EXISTS password_reset_tokens
+                   (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    otp TEXT,
+                    expiry TIMESTAMP,
+                    used BOOLEAN DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    conn.close()
 
+# Add this to the initialization section
+create_password_reset_table()
 
 # Update the initialization section
 create_auth_table()
