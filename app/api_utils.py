@@ -41,6 +41,47 @@ def get_api_response(question, session_id, model):
     except Exception as e:
         st.error(f"Connection Error: {str(e)}")
         return None
+    
+def get_direct_api_response(question, session_id, model):
+    # Initialize message count if not already present
+    if "message_count" not in st.session_state:
+        st.session_state.message_count = 0
+
+    # Check if the user has reached the message limit
+    if st.session_state.message_count >= 5:
+        st.error("You have reached the maximum number of messages. Please login to continue.")
+        return None
+
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+
+    data = {
+        "question": question,
+        "model": model
+    }
+
+    if session_id:
+        data["session_id"] = session_id
+
+    try:
+        response = requests.post(
+            "http://localhost:8000/direct_chat",
+            headers=headers,
+            json=data
+        )
+
+        if response.status_code == 200:
+            st.session_state.message_count += 1  # Increment message count
+            return response.json()
+        else:
+            st.error(f"API Error: {response.status_code}\n{response.text}")
+            return None
+    except Exception as e:
+        st.error(f"Connection Error: {str(e)}")
+        return None
+
 
 def login_user(username: str, password: str) -> bool:
     """

@@ -40,6 +40,45 @@ class ChatQuery(BaseModel):
     model: str
     session_id: Optional[str] = None
 
+
+# Dictionary to track message count per session
+message_count = {}
+
+@app.post("/direct_chat", response_model=QueryResponse)
+async def chat(query_input: ChatQuery):
+    try:
+        # Add validation
+        if not query_input.question:
+            raise HTTPException(status_code=400, detail="Question is required")
+
+        # Track message count per session
+        session_id = query_input.session_id or str(uuid.uuid4())
+        if session_id not in message_count:
+            message_count[session_id] = 0
+
+        if message_count[session_id] >= 5:
+            raise HTTPException(status_code=403, detail="Message limit reached. Please login to continue.")
+
+        # Existing logic with explicit initialization
+        if not hasattr(app.state, 'agent'):
+            app.state.agent = initialize_system()
+
+        # Process through agent
+        response = app.state.agent.chat(query_input.question)
+
+        # Increment message count
+        message_count[session_id] += 1
+
+        # Your existing logging/DB logic
+        return QueryResponse(
+            answer=str(response),
+            session_id=session_id,
+            model=query_input.model
+        )
+    except Exception as e:
+        logging.error(f"Chat error: {traceback.format_exc()}")
+        raise HTTPException(500, detail=str(e))
+
 # Update the chat endpoint
 # Protect your chat endpoint
 @app.post("/chat", response_model=QueryResponse)

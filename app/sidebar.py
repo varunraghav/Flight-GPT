@@ -27,7 +27,9 @@ def display_sidebar():
             "United Airlines",
             "SouthWest Airlines",
             "Alaska Air",
-            "Hawaiian Airlines"
+            "Hawaiian Airlines",
+            "Indigo Airlines",
+            "Vistara Airlines"
         ]
         for airline in available_airlines:
             st.write(f"- {airline}")
